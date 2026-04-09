@@ -4,12 +4,9 @@ import jdk.jfr.Description;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
-import testUtils.Creator;
+import testData.PracticeFormTestData;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Set;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.*;
@@ -17,33 +14,22 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 
 public class PracticeFormTests extends TestBase {
-    private static final String formUrl = "/automation-practice-form";
-    private static final Set<Integer> numFieldsForShortSubmit = new HashSet<>(Set.of(1, 3, 4));
-    private static final LinkedHashMap<String, String> correctFormData = new LinkedHashMap<>();
+    PracticeFormTestData testData;
 
     @BeforeEach
     @Description("Параметризация тестовых данных")
     void parametrizationTestData() throws Exception {
-        correctFormData.put("Student Name", Creator.getRandomLetterString(10) + " " + Creator.getRandomLetterString(10));
-        correctFormData.put("Student Email", Creator.getRandomLetterString(10) + "@" + Creator.getRandomLetterString(5) + ".com");
-        correctFormData.put("Gender", "Other");
-        correctFormData.put("Mobile", Creator.getRandomNumericString(10));
-        correctFormData.put("Date of Birth", "31 December,1999");
-        correctFormData.put("Subjects", "Maths");
-        correctFormData.put("Hobbies", "Reading");
-        correctFormData.put("Picture", "images.jpg");
-        correctFormData.put("Address", Creator.getRandomLetterString(50));
-        correctFormData.put("State and City", "NCR Delhi");
+        testData = new PracticeFormTestData();
     }
 
     @Test
     @Description("Негативная проверка на неправильное заполенние телефона")
     void negativePhoneErrorPracticeFormTest() {
-        open(formUrl);
-        $(byId("firstName")).setValue(correctFormData.get("Student Name").split(" ")[0]);
-        $(byId("lastName")).setValue(correctFormData.get("Student Name").split(" ")[1]);
-        $(byId("genterWrapper")).$(byValue(correctFormData.get("Gender"))).click();
-        $(byId("userNumber")).setValue("qwert");
+        open(testData.getFormUrl());
+        $(byId("firstName")).setValue(testData.getFirstName());
+        $(byId("lastName")).setValue(testData.getLastName());
+        $(byId("genterWrapper")).$(byValue(testData.getGender())).click();
+        $(byId("userNumber")).setValue(testData.getUserNumberIncorrect());
         $(byId("submit")).click();
         $(byId("userNumber")).shouldHave(cssValue("border-color", "rgb(220, 53, 69)"));
     }
@@ -51,12 +37,12 @@ public class PracticeFormTests extends TestBase {
     @Test
     @Description("Негативная проверка на неправильное заполнение почты")
     void negativeMailErrorPracticeFormTest() {
-        open(formUrl);
-        $(byId("firstName")).setValue(correctFormData.get("Student Name").split(" ")[0]);
-        $(byId("lastName")).setValue(correctFormData.get("Student Name").split(" ")[1]);
-        $(byId("genterWrapper")).$(byValue(correctFormData.get("Gender"))).click();
-        $(byId("userNumber")).setValue(correctFormData.get("Mobile"));
-        $(byId("userEmail")).setValue("qwerty");
+        open(testData.getFormUrl());
+        $(byId("firstName")).setValue(testData.getFirstName());
+        $(byId("lastName")).setValue(testData.getLastName());
+        $(byId("genterWrapper")).$(byValue(testData.getGender())).click();
+        $(byId("userNumber")).setValue(testData.getUserNumber());
+        $(byId("userEmail")).setValue(testData.getUserEmailIncorrect());
         $(byId("submit")).click();
         $(byId("userEmail")).shouldHave(cssValue("border-color", "rgb(220, 53, 69)"));
     }
@@ -64,7 +50,7 @@ public class PracticeFormTests extends TestBase {
     @Test
     @Description("Негативная проверка на незаполнение всех обязательных полей")
     void negativeShortSubmitPracticeFormTest() {
-        open(formUrl);
+        open(testData.getFormUrl());
         $(byId("submit")).click();
         $(byId("firstName")).shouldHave(cssValue("border-color", "rgb(220, 53, 69)"));
         $(byId("lastName")).shouldHave(cssValue("border-color", "rgb(220, 53, 69)"));
@@ -80,18 +66,18 @@ public class PracticeFormTests extends TestBase {
     @Test
     @Description("Позитивно проверяются только обязательные поля формы")
     void positiveShortSubmitPracticeFormTest() {
-        open(formUrl);
-        $(byId("firstName")).setValue(correctFormData.get("Student Name").split(" ")[0]);
-        $(byId("lastName")).setValue(correctFormData.get("Student Name").split(" ")[1]);
-        $(byId("genterWrapper")).$(byValue(correctFormData.get("Gender"))).click();
-        $(byId("userNumber")).setValue(correctFormData.get("Mobile"));
+        open(testData.getFormUrl());
+        $(byId("firstName")).setValue(testData.getFirstName());
+        $(byId("lastName")).setValue(testData.getLastName());
+        $(byId("genterWrapper")).$(byValue(testData.getGender())).click();
+        $(byId("userNumber")).setValue(testData.getUserNumber());
         $(byId("submit")).click();
         $(byClassName("table-responsive")).should(appear);
         $(byClassName("table-responsive")).$("tbody").$$("tr").forEach(x -> {
             String key = x.$$("td").get(0).text();
-            Integer numField = (new ArrayList<>(correctFormData.keySet())).indexOf(key) + 1;
-            if (numFieldsForShortSubmit.contains(numField)) {
-                x.$$("td").get(1).shouldHave(text(correctFormData.get(key)));
+            Integer numField = (new ArrayList<>(testData.getCorrectFormData().keySet())).indexOf(key) + 1;
+            if (testData.getNumFieldsForShortSubmit().contains(numField)) {
+                x.$$("td").get(1).shouldHave(text(testData.getCorrectFormData().get(key)));
             }
         });
     }
@@ -101,41 +87,37 @@ public class PracticeFormTests extends TestBase {
     @Description("Позитивно проверяются все поля формы, а не только обязательные")
     void positiveFullSubmitPracticeFormTest() {
 
-        open(formUrl);
-        $(byId("firstName")).setValue(correctFormData.get("Student Name").split(" ")[0]);
+        open(testData.getFormUrl());
+        $(byId("firstName")).setValue(testData.getFirstName());
 
-        $(byId("lastName")).setValue(correctFormData.get("Student Name").split(" ")[1]);
+        $(byId("lastName")).setValue(testData.getLastName());
 
-        $(byId("userEmail")).setValue(correctFormData.get("Student Email"));
+        $(byId("userEmail")).setValue(testData.getUserEmail());
 
-        $(byId("genterWrapper")).$(byValue(correctFormData.get("Gender"))).click();
+        $(byId("genterWrapper")).$(byValue(testData.getGender())).click();
 
-        $(byId("userNumber")).setValue(correctFormData.get("Mobile"));
+        $(byId("userNumber")).setValue(testData.getUserNumber());
 
         $(byId("dateOfBirthInput")).click();
-        $(byClassName("react-datepicker__year-select")).selectOption(correctFormData.get("Date of Birth").split(",")[1]);
-        $(byClassName("react-datepicker__month-select")).selectOption(correctFormData.get("Date of Birth").split(",")[0].split(" ")[1]);
-        $(byClassName("react-datepicker__month")).$(byText(correctFormData.get("Date of Birth").split(",")[0].split(" ")[0])).click();
+        $(byClassName("react-datepicker__year-select")).selectOption(testData.getYear());
+        $(byClassName("react-datepicker__month-select")).selectOption(testData.getMonth());
+        $(byClassName("react-datepicker__month")).$(byText(testData.getDay())).click();
 
-        $(byId("subjectsInput")).sendKeys(correctFormData.get("Subjects"));
-        //странно, у меня этот селектор появляется и тест отрабатывает. Подтверждение: src\test\resources\stranno.png
-        //$("[aria-activedescendant=react-select-2-option-0]").should(appear).shouldHave(attribute("value",correctFormData.get("Subjects"))).sendKeys(Keys.ENTER);
-        //вот то же самое без захвата селектора aria-activedescendant:
-        $(byAttribute("value", correctFormData.get("Subjects"))).should(appear).sendKeys(Keys.ENTER);
+        $(byId("subjectsInput")).sendKeys(testData.getSubjects());
+        $(byAttribute("value", testData.getSubjects())).should(appear).sendKeys(Keys.ENTER);
 
-        $(byId("hobbiesWrapper")).$(byText(correctFormData.get("Hobbies"))).click();
+        $(byId("hobbiesWrapper")).$(byText(testData.getHobbies())).click();
 
-        //$(byId("uploadPicture")).uploadFile(new File("src/test/resources/" + correctFormData.get("Picture")));
-        $(byId("uploadPicture")).uploadFromClasspath(correctFormData.get("Picture"));
+        $(byId("uploadPicture")).uploadFromClasspath(testData.getPicture());
 
-        $("textarea[id=currentAddress]").setValue(correctFormData.get("Address"));
+        $("textarea[id=currentAddress]").setValue(testData.getCurrentAddress());
 
-        $(byId("react-select-3-input")).sendKeys(correctFormData.get("State and City").split(" ")[0]);
-        $(byId("react-select-3-input")).shouldHave(attribute("value", correctFormData.get("State and City").split(" ")[0]))
+        $(byId("react-select-3-input")).sendKeys(testData.getState());
+        $(byId("react-select-3-input")).shouldHave(attribute("value", testData.getState()))
                 .sendKeys(Keys.ENTER);
 
-        $(byId("react-select-4-input")).sendKeys(correctFormData.get("State and City").split(" ")[1]);
-        $(byId("react-select-4-input")).shouldHave(attribute("value", correctFormData.get("State and City").split(" ")[1]))
+        $(byId("react-select-4-input")).sendKeys(testData.getCity());
+        $(byId("react-select-4-input")).shouldHave(attribute("value", testData.getCity()))
                 .sendKeys(Keys.ENTER);
 
         $(byId("submit")).click();
@@ -143,7 +125,7 @@ public class PracticeFormTests extends TestBase {
         $(byClassName("table-responsive")).should(appear);
 
         $(byClassName("table-responsive")).$("tbody").$$("tr").forEach(x -> {
-            x.$$("td").get(1).shouldHave(text(correctFormData.get(x.$$("td").get(0).text())));
+            x.$$("td").get(1).shouldHave(text(testData.getCorrectFormData().get(x.$$("td").get(0).text())));
         });
     }
 }
