@@ -3,7 +3,7 @@ package tests;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import testUtils.Get;
+import testUtils.Creator;
 
 import java.util.LinkedHashMap;
 
@@ -20,10 +20,10 @@ public class TextBoxTests extends TestBase {
     @BeforeEach
     @Description("Параметризация тестовых данных")
     void parametrizationTestData() throws Exception {
-        correctFormData.put("name", Get.randomLetterString(10));
-        correctFormData.put("email", Get.randomLetterString(10) + "@" + Get.randomLetterString(5) + ".com");
-        correctFormData.put("currentAddress", Get.randomLetterString(50));
-        correctFormData.put("permanentAddress", Get.randomLetterString(50));
+        correctFormData.put("name", Creator.getRandomLetterString(10));
+        correctFormData.put("email", Creator.getRandomLetterString(10) + "@" + Creator.getRandomLetterString(5) + ".com");
+        correctFormData.put("currentAddress", Creator.getRandomLetterString(50));
+        correctFormData.put("permanentAddress", Creator.getRandomLetterString(50));
     }
 
     @Test

@@ -2,9 +2,9 @@ package testUtils;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Get {
+public class Creator {
 
-    public static String randomLetterString(int length) throws Exception {
+    public static String getRandomLetterString(int length) throws Exception {
         try {
             StringBuilder stringBuilder = new StringBuilder(length);
             for (int i = 0; i < length; i++) {
@@ -16,7 +16,7 @@ public class Get {
         }
     }
 
-    public static String randomNumericString(int length) throws Exception {
+    public static String getRandomNumericString(int length) throws Exception {
         try {
             StringBuilder stringBuilder = new StringBuilder(length);
             for (int i = 0; i < length; i++) {

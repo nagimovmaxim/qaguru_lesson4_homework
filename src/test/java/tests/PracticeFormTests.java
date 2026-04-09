@@ -4,7 +4,7 @@ import jdk.jfr.Description;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
-import testUtils.Get;
+import testUtils.Creator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,15 +24,15 @@ public class PracticeFormTests extends TestBase {
     @BeforeEach
     @Description("Параметризация тестовых данных")
     void parametrizationTestData() throws Exception {
-        correctFormData.put("Student Name", Get.randomLetterString(10) + " " + Get.randomLetterString(10));
-        correctFormData.put("Student Email", Get.randomLetterString(10) + "@" + Get.randomLetterString(5) + ".com");
+        correctFormData.put("Student Name", Creator.getRandomLetterString(10) + " " + Creator.getRandomLetterString(10));
+        correctFormData.put("Student Email", Creator.getRandomLetterString(10) + "@" + Creator.getRandomLetterString(5) + ".com");
         correctFormData.put("Gender", "Other");
-        correctFormData.put("Mobile", Get.randomNumericString(10));
+        correctFormData.put("Mobile", Creator.getRandomNumericString(10));
         correctFormData.put("Date of Birth", "31 December,1999");
         correctFormData.put("Subjects", "Maths");
         correctFormData.put("Hobbies", "Reading");
         correctFormData.put("Picture", "images.jpg");
-        correctFormData.put("Address", Get.randomLetterString(50));
+        correctFormData.put("Address", Creator.getRandomLetterString(50));
         correctFormData.put("State and City", "NCR Delhi");
     }
 
