@@ -12,7 +12,7 @@ public class TestBase {
         headless = true;
         browserSize = "2560x1440";
         browser = "chrome";
-        browserVersion = "latest";
+        //browserVersion = "latest";
         baseUrl = "https://demoqa.com";
         //pageLoadStrategy = "eager";
         timeout = 10000;
